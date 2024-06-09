@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App: End to End System</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            /* overflow: hidden; */
+            /* Menghindari scroll pada video */
+        }
+
+        /* Style untuk video background */
+        #video-bg {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* Agar video mengisi seluruh area */
+            z-index: -1;
+            /* Mengatur video di belakang konten lain */
+        }
+
+        header {
+            background-color: rgba(0, 0, 0, 0.7);
+            /* Warna latar belakang header semi-transparan */
+            color: #fff;
+            padding: 1em 0;
+            text-align: center;
+        }
+
+        main {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        section {
+            background-color: rgba(0, 0, 0, 0.5);
+            /* Warna latar belakang hitam semi-transparan */
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(255, 43, 43, 0.1);
+            backdrop-filter: blur(10px);
+            /* Efek blur */
+            color: #fff;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="file"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 15px;
+            margin-right: 5px;
+            border: none;
+            border-radius: 4px;
+            background-color: #86005e;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+
+        button:hover {
+            background-color: #011fc9;
+            transform: scale(1.1);
+        }
+
+        .result-container {
+            background-color: #000000;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-top: 20px;
+            color: #fff;
+        }
+
+        .result-container h3 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <video id="video-bg" autoplay muted loop>
+        <source src="images/bg-vid.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <header>
+        <h1>Chat App</h1>
+        <p>Implementasi End to end system untuk Aplikasi chatting berbasis website</p>
+    </header>
+    <main>
+        <section id="crypto">
+            <h2>Caesar Cipher</h2>
+            <label for="plainText">Plain Text:</label>
+            <input type="text" id="plainText" placeholder="Enter plain text">
+            <label for="shift">Shift:</label>
+            <input type="number" id="shift" placeholder="Enter shift value">
+            <button onclick="encryptCaesar()">Encrypt</button>
+            <button onclick="decryptCaesar()">Decrypt</button>
+            <div class="result-container">
+                <div>
+                    <h3>Data Diterima User:</h3>
+                    <p id="userText"></p>
+                </div>
+                <div>
+                    <h3>Data Diterima Admin:</h3>
+                    <p id="adminText"></p>
+                </div>
+            </div>
+        </section>
+        <section id="stego">
+            <h2>Steganografi</h2>
+            <label for="imageInput">Select Image:</label>
+            <input type="file" id="imageInput">
+            <label for="stegoMessage">Message:</label>
+            <input type="text" id="stegoMessage" placeholder="Enter message to hide">
+            <button onclick="encodeStego()">Encode</button>
+            <button onclick="decodeStego()">Decode</button>
+            <div class="result-container">
+                <a id="downloadLink" style="display:none;">Download Encoded Image</a>
+                <p id="resultStego"></p>
+            </div>
+        </section>
+        
+    </main>
+    <div class="container align-center">
+        <h2>Dibuat oleh</h2>
+        <h3>Mohammad Aly Al Wafa | Mohammad Ade Irawan | Akbar Ramadhan</h3>
+    </div>
+    <script>
+        function encryptCaesar() {
+            const plainText = document.getElementById('plainText').value;
+            const shift = parseInt(document.getElementById('shift').value);
+            let encryptedText = '';
+
+            for (let i = 0; i < plainText.length; i++) {
+                let char = plainText[i];
+                if (char.match(/[a-z]/i)) {
+                    const code = plainText.charCodeAt(i);
+                    if (code >= 65 && code <= 90) {
+                        char = String.fromCharCode(((code - 65 + shift) % 26) + 65);
+                    } else if (code >= 97 && code <= 122) {
+                        char = String.fromCharCode(((code - 97 + shift) % 26) + 97);
+                    }
+                }
+                encryptedText += char;
+            }
+
+            document.getElementById('userText').innerText = plainText;
+            document.getElementById('adminText').innerText = encryptedText;
+        }
+
+        function decryptCaesar() {
+            const encryptedText = document.getElementById('plainText').value;
+            const shift = parseInt(document.getElementById('shift').value);
+            let decryptedText = '';
+
+            for (let i = 0; i < encryptedText.length; i++) {
+                let char = encryptedText[i];
+                if (char.match(/[a-z]/i)) {
+                    const code = encryptedText.charCodeAt(i);
+                    if (code >= 65 && code <= 90) {
+                        char = String.fromCharCode(((code - 65 - shift + 26) % 26) + 65);
+                    } else if (code >= 97 && code <= 122) {
+                        char = String.fromCharCode(((code - 97 - shift + 26) % 26) + 97);
+                    }
+                }
+                decryptedText += char;
+            }
+
+            document.getElementById('userText').innerText = encryptedText;
+            document.getElementById('adminText').innerText = decryptedText;
+        }
+
+        function encodeStego() {
+            const imageInput = document.getElementById('imageInput').files[0];
+            const message = document.getElementById('stegoMessage').value;
+
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = function () {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+
+                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    const data = imageData.data;
+
+                    let messageBits = '';
+                    for (let i = 0; i < message.length; i++) {
+                        let charBits = message.charCodeAt(i).toString(2);
+                        charBits = '00000000'.substring(charBits.length) + charBits;
+                        messageBits += charBits;
+                    }
+                    messageBits += '00000000'; // Null character at the end of the message
+
+                    let dataIndex = 0;
+                    for (let i = 0; i < data.length; i += 4) {
+                        if (dataIndex < messageBits.length) {
+                            data[i] = (data[i] & 254) | parseInt(messageBits[dataIndex], 2);
+                            dataIndex++;
+                        }
+                    }
+
+                    ctx.putImageData(imageData, 0, 0);
+
+                    // Convert the canvas data to a blob and create a download link
+                    canvas.toBlob(function (blob) {
+                        const url = URL.createObjectURL(blob);
+                        const downloadLink = document.getElementById('downloadLink');
+                        downloadLink.href = url;
+                        downloadLink.download = 'encoded_image.png';
+                        downloadLink.click();
+                    }, 'image/png');
+                }
+            };
+            reader.readAsDataURL(imageInput);
+        }
+
+        function decodeStego() {
+            const imageInput = document.getElementById('imageInput').files[0];
+
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = function () {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+
+                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    const data = imageData.data;
+
+                    let messageBits = '';
+                    for (let i = 0; i < data.length; i += 4) {
+                        messageBits += (data[i] & 1).toString();
+                    }
+
+                    let message = '';
+                    for (let i = 0; i < messageBits.length; i += 8) {
+                        let charBits = messageBits.substring(i, i + 8);
+                        let charCode = parseInt(charBits, 2);
+                        if (charCode === 0) break;
+                        message += String.fromCharCode(charCode);
+                    }
+
+                    document.getElementById('resultStego').innerText = 'Decoded message: ' + message;
+                }
+            };
+            reader.readAsDataURL(imageInput);
+        }
+    </script>
+    
+    <style>
+        .container.align-center {
+            text-align: center;
+            /* margin-top: 50px; */
+            /* Sesuaikan margin atas sesuai kebutuhan */
+            color: #fff;
+        }
+    </style>
+</body>
+
+</html>
